@@ -19,7 +19,7 @@ class NCP_ALBListenerTLS12(BaseResourceCheck):
             protocol = conf['protocol'][0]
             if protocol in ('HTTPS', 'TLS'):
                 if 'tls_min_version_type' in conf.keys():
-                    if conf['tls_min_version_type'][0] == 'TLS_1_2':
+                    if conf['tls_min_version_type'][0] == 'TLSV12':
                         return CheckResult.PASSED
                 return CheckResult.FAILED
             elif protocol in ('TCP', 'UDP', 'TCP_UDP'):
