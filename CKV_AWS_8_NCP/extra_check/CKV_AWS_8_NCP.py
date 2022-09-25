@@ -30,4 +30,4 @@ class NCP_LaunchConfigurationEBSEncryption(BaseResourceCheck):
             else:
                 return CheckResult.FAILED#skipped 인지 failed 인지 고민.
 
-scanner = NCP_LaunchConfigurationEBSEncryption()
+check = NCP_LaunchConfigurationEBSEncryption()

@@ -25,4 +25,4 @@ class NCP_ALBListenerTLS12(BaseResourceCheck):
             elif protocol in ('TCP', 'UDP', 'TCP_UDP'):
                 return CheckResult.PASSED
 
-scanner = NCP_ALBListenerTLS12()
+check = NCP_ALBListenerTLS12()

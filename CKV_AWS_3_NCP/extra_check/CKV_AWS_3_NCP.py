@@ -20,4 +20,4 @@ class NCP_LaunchConfigurationEBSEncryption(BaseResourceCheck):
                 return CheckResult.FAILED
         return CheckResult.PASSED
 
-scanner = NCP_LaunchConfigurationEBSEncryption()
+check = NCP_LaunchConfigurationEBSEncryption()
