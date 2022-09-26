@@ -13,3 +13,4 @@
 - Resource : [VPC] ncloud_lb_listener
     - Argument : tls_min_version_type ← 얘가 TLSV12이어야 함.
 - Terraform Code : main_pass.tf, main_fail.tf, main_fail_2.tf, main_fail_3.tf
+## Custom Rule : NCP
