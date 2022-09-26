@@ -22,7 +22,7 @@ class NCP_ALBListenerTLS12(BaseResourceCheck):
                     if conf['tls_min_version_type'][0] == 'TLSV12':
                         return CheckResult.PASSED
                 return CheckResult.FAILED
-            elif protocol in ('TCP', 'UDP', 'TCP_UDP'):
-                return CheckResult.PASSED
+            else:
+                return CheckResult.UNKNOWN#SKIPP인지 UNKNOWN인지 확인 필요
 
 check = NCP_ALBListenerTLS12()
