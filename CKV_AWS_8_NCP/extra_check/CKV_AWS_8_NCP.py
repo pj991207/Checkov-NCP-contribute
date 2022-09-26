@@ -3,7 +3,7 @@ from checkov.common.models.enums import CheckResult, CheckCategories
 from checkov.terraform.checks.resource.base_resource_check import BaseResourceCheck
 
 
-class NCP_LaunchConfigurationEBSEncryption(BaseResourceCheck):
+class NCP_LaunchConfigurationEncryption(BaseResourceCheck):
     def __init__(self):
         name = "you can set whether to encrypt basic block storage if server image is RHV. Default false."
         id = "CKV_AWS_8_NCP"
@@ -30,4 +30,4 @@ class NCP_LaunchConfigurationEBSEncryption(BaseResourceCheck):
             else:
                 return CheckResult.FAILED#skipped 인지 failed 인지 고민.
 
-check = NCP_LaunchConfigurationEBSEncryption()
+check = NCP_LaunchConfigurationEncryption()

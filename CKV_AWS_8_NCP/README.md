@@ -1,43 +1,50 @@
-# CheckOV_NCP_Rules
-BoB11_Project
-## AWS_Rule
+# NCP_LaunchconfigurationEncryption
 
-- ID : CKV_AWS_213
-- Entity : aws_load_balancer_policy
-- Policy : Ensure ELB Policy uses only secure protocols
-    
-    loadbalancer는 안전한 프로토콜만을 사용하는가?
-    
-- Resource : [VPC] ncloud_lb_listener
-    - Argument : tls_min_version_type ← 얘가 TLSV12이어야 함.
+## Decription
 
+- AWS_ID : CKV_AWS_8
+- AWS_Entity : AWS::AutoScaling::LaunchConfiguration
+- Policy : Ensure all data stored in the Launch configuration EBS is securely encrypted
+    
+    서버에 암호화를 할 수 있는가, ncloud인 경우 RHV만 암호화가 가능
+    
+- Resource : [VPC] ncloud_launch_configuration
+    - Argument : is_encrypted_volume(centos인 경우 True인지 확인하면됨)
+- Terraform Code : main_pass.tf, main_fail.tf, main_fail_2.tf, main_fail_3.tf
 ## Custom Rule : NCP
 
 ```python
-from checkov.terraform.checks.resource.base_resource_check import BaseResourceCheck
 from checkov.common.models.enums import CheckResult, CheckCategories
+from checkov.terraform.checks.resource.base_resource_check import BaseResourceCheck
 
-class LBSecureProtocols(BaseResourceCheck):
+class NCP_LaunchConfigurationEncryption(BaseResourceCheck):
     def __init__(self):
-        name = "Ensure ELB Policy uses only secure protocols"
-        id = "CKV_NCP_213"
-        supported_resources = ['ncloud_lb_listener']
-
-        categories = [CheckCategories.BACKUP_AND_RECOVERY]
-        guideline = "You should Ensure ELB Policy uses only secure protocols"
-        super().__init__(name=name, id=id, categories=categories, supported_resources=supported_resources, guideline=guideline)
+        name = "you can set whether to encrypt basic block storage if server image is RHV. Default false."
+        id = "CKV_AWS_8_NCP"
+        supported_resources = ['ncloud_launch_configuration']
+        categories = [CheckCategories.GENERAL_SECURITY]
+        super().__init__(name=name, id=id, categories=categories, supported_resources=supported_resources)
 
     def scan_resource_conf(self, conf):
-        if 'protocol' in conf.keys():
-          protocol = conf['protocol'][0]
-          if protocol == 'HTTPS' or protocol == 'TLS':
-            if 'tls_min_version_type' in conf.keys():
-              TLSVersion = conf['tls_min_version_type'][0]
-              if TLSVersion == 'TLSV12': #TLS12 is vulnerable
-                return CheckResult.PASSED
-        return CheckResult.FAILED
+        RHV = [["SPSW0LINUX000046"],["SPSW0LINUX000045"],["SPSW0LINUX000044"],["SPSW0LINUX000043"],["SPSW0LINUX000032"],["SPSW0LINUX000031"],
+               ["SPSW0LINUX000050"],["SPSW0LINUX000049"],["SPSW0LINUX000048"],["SPSW0LINUX000047"],["SPSW0LINUX000060"],["SPSW0LINUX000056"],
+               ["SPSW0LINUX000062"],["SPSW0LINUX000061"],["SPSW0LINUX000074"],["SPSW0LINUX000046"],["SPSW0LINUX000069"],["SPSW0LINUX000070"],
+               ["SPSW0LINUX000076"],["SPSW0LINUX000078"],["SPSW0LINUX000066"],["SPSW0LINUX000068"],["SPSW0LINUX000072"]]
+        if 'server_image_product_code' in conf.keys():
+            server_image_product_code = conf['server_image_product_code']
+            if server_image_product_code in RHV:
+                if 'is_encrypted_volume' in conf.keys():
+                    is_encrypted_volume = conf['is_encrypted_volume']
+                    if is_encrypted_volume == [True]:
+                        return CheckResult.PASSED
+                    else:
+                        return CheckResult.FAILED
+                else:
+                    return CheckResult.FAILED
+            else:
+                return CheckResult.FAILED#skipped 인지 failed 인지 고민.
 
-scanner = LBSecureProtocols()
+check = NCP_LaunchConfigurationEncryption()
 ```
 
 ## Example.tf
@@ -45,41 +52,37 @@ scanner = LBSecureProtocols()
 **passed**
 
 ```python
-resource "ncloud_lb_listener" "listener" {
-    load_balancer_no = ncloud_lb.lb.id
-    protocol = "HTTPS"
-    tls_min_version_type = "TLSV12"
-    port = 80
-    target_group_no = ncloud_lb_target_group.tg.id
+resource "ncloud_launch_configuration" "lc" {
+  name = "my-lc"
+  server_image_product_code = "SPSW0LINUX000045"
+  server_product_code = "SPSVRSSD00000003"
+  is_encrypted_volume = true
 }
 ```
 
 **Failed**
 
 ```python
-resource "ncloud_lb_listener" "listener" {
-    load_balancer_no = ncloud_lb.lb.id
-    protocol = "HTTP"
-    port = 80
-    target_group_no = ncloud_lb_target_group.tg.id
+resource "ncloud_launch_configuration" "lc" {
+  name = "my-lc"
+  server_image_product_code = "SPSW0LINUX000001"
+  server_product_code = "SPSVRSSD00000003"
 }
 ```
 
 ```python
-resource "ncloud_lb_listener" "listener" {
-    load_balancer_no = ncloud_lb.lb.id
-    protocol = "HTTPS"
-    port = 80
-    target_group_no = ncloud_lb_target_group.tg.id
+resource "ncloud_launch_configuration" "lc" {
+  name = "my-lc"
+  server_image_product_code = "SPSW0LINUX000045"
+  server_product_code = "SPSVRSSD00000003"
+  is_encrypted_volume = false
 }
 ```
 
 ```python
-resource "ncloud_lb_listener" "listener" {
-    load_balancer_no = ncloud_lb.lb.id
-    protocol = "TLS"
-    tls_min_version_type = "TLSV10"
-    port = 80
-    target_group_no = ncloud_lb_target_group.tg.id
+resource "ncloud_launch_configuration" "lc" {
+  name = "my-lc"
+  server_image_product_code = "SPSW0LINUX000045"
+  server_product_code = "SPSVRSSD00000003"
 }
 ```
