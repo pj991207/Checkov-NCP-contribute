@@ -8,7 +8,7 @@ class NCP_LaunchConfigurationEncryption(BaseResourceCheck):
         name = "you can set whether to encrypt basic block storage if server image is RHV. Default false."
         id = "CKV_AWS_8_NCP"
         supported_resources = ['ncloud_launch_configuration']
-        categories = [CheckCategories.GENERAL_SECURITY]
+        categories = [CheckCategories.ENCRYPTION]
         super().__init__(name=name, id=id, categories=categories, supported_resources=supported_resources)
 
     def scan_resource_conf(self, conf):

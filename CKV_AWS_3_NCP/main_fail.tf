@@ -21,7 +21,6 @@ resource "ncloud_server" "server" {
   server_image_product_code = data.ncloud_server_image.server_image.id
   server_product_code       = data.ncloud_server_product.product.id
   login_key_name            = ncloud_login_key.loginkey.key_name
-    is_encrypted_base_block_storage_volume = true
 }
 
 data "ncloud_server_image" "server_image" {
