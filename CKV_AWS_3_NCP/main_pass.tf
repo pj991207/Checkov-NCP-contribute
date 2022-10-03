@@ -18,34 +18,8 @@ resource "ncloud_subnet" "test" {
 resource "ncloud_server" "server" {
   subnet_no                 = ncloud_subnet.test.id
   name                      = "my-tf-server"
-  server_image_product_code = data.ncloud_server_image.server_image.id
-  server_product_code       = data.ncloud_server_product.product.id
+  server_image_product_code = "SW.VSVR.OS.LNX64.CNTOS.0703.B050"
+  server_product_code = "SVR.VSVR.HICPU.C002.M004.NET.SSD.B050.G002"
   login_key_name            = ncloud_login_key.loginkey.key_name
-    is_encrypted_base_block_storage_volume = true
-}
-
-data "ncloud_server_image" "server_image" {
-  filter {
-    name = "os_information"
-    values = ["CentOS 7.3 (64-bit)"]
-  }
-}
-
-data "ncloud_server_product" "product" {
-  server_image_product_code = data.ncloud_server_image.server_image.id
-
-  filter {
-    name   = "product_code"
-    values = ["SSD"]
-  }
-
-  filter {
-    name   = "cpu_count"
-    values = ["2"]
-  }
-
-  filter {
-    name   = "memory_size"
-    values = ["8GB"]
-  }
+  is_encrypted_base_block_storage_volume = true
 }

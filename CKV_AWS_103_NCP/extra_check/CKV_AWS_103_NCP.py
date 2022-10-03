@@ -3,7 +3,7 @@ from checkov.common.models.enums import CheckResult, CheckCategories
 from checkov.terraform.checks.resource.base_resource_check import BaseResourceCheck
 
 
-class NCP_ALBListenerTLS12(BaseResourceCheck):
+class NCP_LBListenerTLS12(BaseResourceCheck):
 
     def __init__(self):
         name = "Ensure that Load Balancer Listener is using at least TLS v1.2"
@@ -25,4 +25,4 @@ class NCP_ALBListenerTLS12(BaseResourceCheck):
             else:
                 return CheckResult.UNKNOWN#SKIPP인지 UNKNOWN인지 확인 필요
 
-check = NCP_ALBListenerTLS12()
+check = NCP_LBListenerTLS12()
